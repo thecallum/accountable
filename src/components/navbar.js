@@ -1,39 +1,29 @@
-import React, { useState } from "react"
-import { checkAuth, login, logout } from "../services/auth"
-import { Link, navigate } from "gatsby"
+import React from "react"
+import { Link } from "gatsby"
 
-export default () => {
-  const [auth, setAuth] = useState(checkAuth())
+import { Consumer } from "../services/security"
 
-  return (
-    <nav
-      style={{
-        backgroundColor: "red",
-      }}
-    >
-      <span>Navbar</span>
+export default () => (
+  <Consumer>
+    {context => (
+      <nav
+        style={{
+          backgroundColor: "red",
+          padding: "15px",
+        }}
+      >
+        <span>Navbar</span>
 
-      <p>Logged IN {auth ? "true" : "false"}</p>
+        <p>name: {context.state.name}</p>
 
-      {auth ? (
-        <a
-          onClick={() => {
-            logout(() => navigate("/app/"))
-            setAuth(false)
-          }}
-        >
-          Logout
-        </a>
-      ) : (
-        <a
-          onClick={() => {
-            login()
-            setAuth(true)
-          }}
-        >
-          Login
-        </a>
-      )}
-    </nav>
-  )
-}
+        <ul>
+          {context.state.auth ? (
+            <button onClick={() => context.logout(() => {})}>Logout</button>
+          ) : (
+            <button onClick={context.login}>Login</button>
+          )}
+        </ul>
+      </nav>
+    )}
+  </Consumer>
+)
