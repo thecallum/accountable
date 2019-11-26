@@ -5,7 +5,6 @@ export default () => {
   return (
     <>
       <p>Home</p>
-      <Link to="/app/about/">about</Link>
     </>
   )
 }

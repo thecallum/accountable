@@ -4,14 +4,14 @@ const { Provider, Consumer } = createContext()
 
 const Security = props => {
   const [state, setState] = useState({
-    name: "John",
-    id: 1,
-    auth: true,
+    name: false,
+    id: false,
+    auth: false,
   })
 
   //   Load token on first load
 
-  const login = () => {
+  const login = cb => {
     setToken()
     setState(state => ({
       ...state,
@@ -19,7 +19,7 @@ const Security = props => {
       id: "1",
       auth: true,
     }))
-    return true
+    if (!!cb) cb()
   }
 
   const logout = cb => {
@@ -30,7 +30,7 @@ const Security = props => {
       id: null,
       auth: false,
     }))
-    cb()
+    if (!!cb) cb()
   }
 
   //   required for gatsby build

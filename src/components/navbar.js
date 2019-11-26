@@ -14,15 +14,21 @@ export default () => (
       >
         <span>Navbar</span>
 
-        {!!context && (
-          <ul>
-            {context.state.auth ? (
-              <button onClick={() => context.logout(() => {})}>Logout</button>
-            ) : (
-              <button onClick={context.login}>Login</button>
-            )}
-          </ul>
-        )}
+        <ul>
+          <li>
+            <Link to="/app/about/">About</Link>
+          </li>
+
+          {!!context && context.state.auth ? (
+            <li>
+              <a onClick={() => context.logout(() => {})}>Logout</a>
+            </li>
+          ) : (
+            <li>
+              <Link to="/app/login/">Login</Link>
+            </li>
+          )}
+        </ul>
       </nav>
     )}
   </Consumer>
