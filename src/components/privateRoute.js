@@ -1,12 +1,15 @@
 import React from "react"
-
-import { navigate } from "gatsby"
+import { Redirect } from "@reach/router"
 import { Consumer } from "../services/security"
 
 export default ({ component: Component, location, ...rest }) => (
   <Consumer>
     {context =>
-      !context.state.auth ? navigate("/app/login/") : <Component {...rest} />
+      !context.state.auth ? (
+        <Redirect to="/app/login/" noThrow />
+      ) : (
+        <Component {...rest} />
+      )
     }
   </Consumer>
 )
