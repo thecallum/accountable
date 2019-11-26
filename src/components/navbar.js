@@ -16,6 +16,9 @@ export default () => (
 
         <ul>
           <li>
+            <Link to="/app/">Home</Link>
+          </li>
+          <li>
             <Link to="/app/about/">About</Link>
           </li>
 

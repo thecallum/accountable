@@ -13,8 +13,6 @@ export default () => (
           <p>About</p>
           <p>name: {context.state.name}</p>
           <Link to="/app/">home</Link>
-
-          <button onClick={context.toggleName}>Toggle Name</button>
         </>
       )}
     </Consumer>

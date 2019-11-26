@@ -11,7 +11,12 @@ const Security = props => {
 
   //   Load token on first load
 
-  const login = cb => {
+  const login = (email, password, cb) => {
+    if (email !== "email" || password !== "password") {
+      if (!!cb) cb(false)
+      return false
+    }
+
     setToken()
     setState(state => ({
       ...state,
@@ -19,7 +24,7 @@ const Security = props => {
       id: "1",
       auth: true,
     }))
-    if (!!cb) cb()
+    if (!!cb) cb(true)
   }
 
   const logout = cb => {
@@ -56,18 +61,10 @@ const Security = props => {
     }))
   }
 
-  const toggleName = () => {
-    setState(state => ({
-      ...state,
-      name: state.name === "Callum" ? "Fred" : "Callum",
-    }))
-  }
-
   return (
     <Provider
       value={{
         state,
-        toggleName,
         login,
         logout,
       }}
