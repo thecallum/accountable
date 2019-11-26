@@ -1,14 +1,12 @@
 import React from "react"
 
-import { Link, navigate } from "gatsby"
-// import { checkAuth } from "../services/auth"
+import { navigate } from "gatsby"
+import { Consumer } from "../services/security"
 
-export default ({ component: Component, location, ...rest }) => {
-  if (false && location.pathname !== "/app/") {
-    navigate("/app/")
-
-    return null
-  }
-
-  return <Component {...rest} />
-}
+export default ({ component: Component, location, ...rest }) => (
+  <Consumer>
+    {context =>
+      !context.state.auth ? navigate("/app/") : <Component {...rest} />
+    }
+  </Consumer>
+)
