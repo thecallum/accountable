@@ -10,11 +10,11 @@ const Navbar = Styled.nav`
   display: flex;
   justify-content: space-between;
 
-  .title {
+  .title a {
     font-weight: 100;
     font-size: 28px;
     color: #fff;
-    font-family: sans-serif;
+    text-decoration: none;
   }
 
   ul {
@@ -36,7 +36,9 @@ export default () => (
   <Consumer>
     {context => (
       <Navbar>
-        <div className="title">Navbar</div>
+        <div className="title">
+          <Link to="/app/">Navbar</Link>
+        </div>
 
         <ul>
           <li>

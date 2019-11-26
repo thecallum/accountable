@@ -7,9 +7,6 @@ const Container = Styled.div`
     width: calc(100% - 60px);
     padding: 30px;
     background-color: #eee;
-
-    box-sizing: border-box;
-
 `
 
 export default ({ children }) => <Container>{children}</Container>

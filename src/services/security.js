@@ -1,35 +1,65 @@
-import React, { createContext, Component, useState } from "react"
+import React, { createContext, Component } from "react"
 
 const { Provider, Consumer } = createContext()
 
-const Security = props => {
-  const [state, setState] = useState({
-    name: false,
-    id: false,
-    auth: false,
-  })
+class Security extends Component {
+  constructor(props) {
+    super(props)
 
-  //   Load token on first load
+    this.login = this.login.bind(this)
+    this.logout = this.logout.bind(this)
+    this.isBrowser = this.isBrowser.bind(this)
+    this.setToken = this.setToken.bind(this)
+    this.deleteToken = this.deleteToken.bind(this)
+    this.getToken = this.getToken.bind(this)
+    this.render = this.render.bind(this)
 
-  const login = (email, password, cb) => {
+    let defaultState
+
+    let token = this.getToken()
+
+    if (token === null) {
+      defaultState = {
+        name: false,
+        id: false,
+        auth: false,
+      }
+    } else {
+      token = JSON.parse(token)
+
+      defaultState = {
+        name: "John",
+        id: "1",
+        auth: true,
+      }
+    }
+
+    this.state = {
+      ...defaultState,
+    }
+  }
+
+  login(email, password, cb) {
     if (email !== "email" || password !== "password") {
       if (!!cb) cb(false)
       return false
     }
 
-    setToken()
-    setState(state => ({
+    this.setToken()
+
+    this.setState(state => ({
       ...state,
       name: "John",
       id: "1",
       auth: true,
     }))
+
     if (!!cb) cb(true)
   }
 
-  const logout = cb => {
-    deleteToken()
-    setState(state => ({
+  logout(cb) {
+    this.deleteToken()
+    this.setState(state => ({
       ...state,
       name: null,
       id: null,
@@ -39,39 +69,36 @@ const Security = props => {
   }
 
   //   required for gatsby build
-  const isBrowser = () => typeof window !== "undefined"
+  isBrowser() {
+    return typeof window !== "undefined"
+  }
 
-  const setToken = () => {
+  setToken() {
     window.localStorage.setItem("token", JSON.stringify({ name: "test" }))
   }
 
-  const deleteToken = () => {
+  deleteToken() {
     window.localStorage.removeItem("token")
   }
 
-  const getToken = () => {
-    if (!isBrowser()) return null
+  getToken() {
+    if (!this.isBrowser()) return null
     return window.localStorage.getItem("token")
   }
 
-  const setName = newName => {
-    setState(state => ({
-      ...state,
-      name: newName,
-    }))
+  render() {
+    return (
+      <Provider
+        value={{
+          state: this.state,
+          login: this.login,
+          logout: this.logout,
+        }}
+      >
+        {this.props.children}
+      </Provider>
+    )
   }
-
-  return (
-    <Provider
-      value={{
-        state,
-        login,
-        logout,
-      }}
-    >
-      {props.children}
-    </Provider>
-  )
 }
 
 export { Consumer, Security }
