@@ -1,4 +1,5 @@
 import React, { createContext, Component } from "react"
+import axios from "axios"
 
 const { Provider, Consumer } = createContext()
 
@@ -20,16 +21,10 @@ class Security extends Component {
 
     if (token === null) {
       defaultState = {
-        name: false,
-        id: false,
         auth: false,
       }
     } else {
-      token = JSON.parse(token)
-
       defaultState = {
-        name: "John",
-        id: "1",
         auth: true,
       }
     }
@@ -39,30 +34,42 @@ class Security extends Component {
     }
   }
 
-  login(email, password, cb) {
-    if (email !== "email" || password !== "password") {
-      if (!!cb) cb(false)
-      return false
+  login(email, password) {
+    const data = {
+      email,
+      password,
     }
 
-    this.setToken()
+    return new Promise(resolve => {
+      axios
+        .post("http://localhost:8000/auth/login", data)
+        .then(res => {
+          const token = res.data
 
-    this.setState(state => ({
-      ...state,
-      name: "John",
-      id: "1",
-      auth: true,
-    }))
+          this.setToken(token)
 
-    if (!!cb) cb(true)
+          this.setState(state => ({
+            ...state,
+            auth: true,
+          }))
+
+          resolve({
+            success: true,
+          })
+        })
+        .catch(e => {
+          resolve({
+            success: false,
+            error: e.message,
+          })
+        })
+    })
   }
 
   logout(cb) {
     this.deleteToken()
     this.setState(state => ({
       ...state,
-      name: null,
-      id: null,
       auth: false,
     }))
     if (!!cb) cb()
@@ -73,8 +80,8 @@ class Security extends Component {
     return typeof window !== "undefined"
   }
 
-  setToken() {
-    window.localStorage.setItem("token", JSON.stringify({ name: "test" }))
+  setToken(token) {
+    window.localStorage.setItem("token", JSON.stringify(token))
   }
 
   deleteToken() {
