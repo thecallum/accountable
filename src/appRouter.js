@@ -9,7 +9,7 @@ import PrivateRoute from "./components/privateRoute"
 
 export default () => (
   <Router>
-    <Home path="/app/" />
+    <PrivateRoute component={Home} path="/app/" />
     <Login path="/app/login/" />
     <PrivateRoute component={About} path="/app/about/" />
   </Router>

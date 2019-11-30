@@ -1,77 +1,111 @@
-import React, { createContext, Component, useState } from "react"
+import React, { createContext, Component } from "react"
+import axios from "axios"
 
 const { Provider, Consumer } = createContext()
 
-const Security = props => {
-  const [state, setState] = useState({
-    name: false,
-    id: false,
-    auth: false,
-  })
+class Security extends Component {
+  constructor(props) {
+    super(props)
 
-  //   Load token on first load
+    this.login = this.login.bind(this)
+    this.logout = this.logout.bind(this)
+    this.isBrowser = this.isBrowser.bind(this)
+    this.setToken = this.setToken.bind(this)
+    this.deleteToken = this.deleteToken.bind(this)
+    this.getToken = this.getToken.bind(this)
+    this.render = this.render.bind(this)
 
-  const login = (email, password, cb) => {
-    if (email !== "email" || password !== "password") {
-      if (!!cb) cb(false)
-      return false
+    let defaultState
+
+    let token = this.getToken()
+
+    if (token === null) {
+      defaultState = {
+        auth: false,
+      }
+    } else {
+      defaultState = {
+        auth: true,
+      }
     }
 
-    setToken()
-    setState(state => ({
-      ...state,
-      name: "John",
-      id: "1",
-      auth: true,
-    }))
-    if (!!cb) cb(true)
+    this.state = {
+      ...defaultState,
+    }
   }
 
-  const logout = cb => {
-    deleteToken()
-    setState(state => ({
+  login(email, password) {
+    const data = {
+      email,
+      password,
+    }
+
+    return new Promise(resolve => {
+      axios
+        .post("http://localhost:8000/auth/login", data)
+        .then(res => {
+          const token = res.data
+
+          this.setToken(token)
+
+          this.setState(state => ({
+            ...state,
+            auth: true,
+          }))
+
+          resolve({
+            success: true,
+          })
+        })
+        .catch(e => {
+          resolve({
+            success: false,
+            error: e.message,
+          })
+        })
+    })
+  }
+
+  logout(cb) {
+    this.deleteToken()
+    this.setState(state => ({
       ...state,
-      name: null,
-      id: null,
       auth: false,
     }))
     if (!!cb) cb()
   }
 
   //   required for gatsby build
-  const isBrowser = () => typeof window !== "undefined"
-
-  const setToken = () => {
-    window.localStorage.setItem("token", JSON.stringify({ name: "test" }))
+  isBrowser() {
+    return typeof window !== "undefined"
   }
 
-  const deleteToken = () => {
+  setToken(token) {
+    window.localStorage.setItem("token", JSON.stringify(token))
+  }
+
+  deleteToken() {
     window.localStorage.removeItem("token")
   }
 
-  const getToken = () => {
-    if (!isBrowser()) return null
+  getToken() {
+    if (!this.isBrowser()) return null
     return window.localStorage.getItem("token")
   }
 
-  const setName = newName => {
-    setState(state => ({
-      ...state,
-      name: newName,
-    }))
+  render() {
+    return (
+      <Provider
+        value={{
+          state: this.state,
+          login: this.login,
+          logout: this.logout,
+        }}
+      >
+        {this.props.children}
+      </Provider>
+    )
   }
-
-  return (
-    <Provider
-      value={{
-        state,
-        login,
-        logout,
-      }}
-    >
-      {props.children}
-    </Provider>
-  )
 }
 
 export { Consumer, Security }

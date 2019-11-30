@@ -10,11 +10,23 @@ const Navbar = Styled.nav`
   display: flex;
   justify-content: space-between;
 
-  .title {
+  li > a {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    display: block;
+
+    &:hover {
+      margin: -1px 0 1px;
+      text-decoration: underline;
+    }
+  }
+
+  .title > a {
     font-weight: 100;
     font-size: 28px;
     color: #fff;
-    font-family: sans-serif;
+    text-decoration: none;
   }
 
   ul {
@@ -36,15 +48,17 @@ export default () => (
   <Consumer>
     {context => (
       <Navbar>
-        <div className="title">Navbar</div>
+        <div className="title">
+          <Link to="/">Navbar</Link>
+        </div>
 
         <ul>
-          <li>
-            <Link to="/app/">Home</Link>
-          </li>
-
           {!!context && context.state.auth ? (
             <>
+              <li>
+                <Link to="/app/">Home</Link>
+              </li>
+
               <li>
                 <Link to="/app/about/">About</Link>
               </li>

@@ -28,17 +28,20 @@ const Form = ({ login }) => {
     if (errors.length > 0) return
 
     setState(state => ({ ...state, loading: true }))
-    setTimeout(() => {
-      login(state.email, state.password, result => {
-        setState(state => ({ ...state, loading: false }))
 
-        if (!result) {
-          setState(state => ({ ...state, errors: ["invalid credentials"] }))
-        } else {
-          navigate("/app/about/")
-        }
-      })
-    }, 1000)
+    login(state.email, state.password).then(res => {
+      console.log("login", res)
+
+      if (res.success) {
+        navigate("/app/about/")
+      }
+
+      setState(state => ({
+        ...state,
+        loading: false,
+        errors: [res.error],
+      }))
+    })
   }
 
   return (

@@ -1,13 +1,16 @@
 import React from "react"
 import Layout from "../components/layout"
-
-// import { useStore } from "easy-peasy"
+import { Link } from "gatsby"
+import { Security } from "../services/security"
 
 export default () => {
   return (
-    <Layout>
-      <div>Hello world!</div>
-      <p>name: yeet</p>
-    </Layout>
+    <Security>
+      <Layout>
+        <h1>Home page</h1>
+        <p>About the app</p>
+        <Link to="/app/login/">Login</Link>
+      </Layout>
+    </Security>
   )
 }

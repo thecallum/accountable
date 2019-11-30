@@ -2,6 +2,8 @@ import React from "react"
 
 export default () => (
   <>
-    <p>Home</p>
+    <h1>Dashboard</h1>
+
+    <p>Summary of all tasks</p>
   </>
 )
