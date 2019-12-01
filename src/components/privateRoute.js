@@ -1,15 +1,13 @@
-import React from "react"
+import React, { useContext } from "react"
 import { Redirect } from "@reach/router"
-import { Consumer } from "../services/security"
+import { Context } from "../context/context"
 
-export default ({ component: Component, location, ...rest }) => (
-  <Consumer>
-    {context =>
-      !context.state.auth ? (
-        <Redirect to="/app/login/" noThrow />
-      ) : (
-        <Component {...rest} />
-      )
-    }
-  </Consumer>
-)
+export default ({ component: Component, location, ...rest }) => {
+  const { store } = useContext(Context)
+
+  return !!store.auth.authenticated ? (
+    <Component {...rest} />
+  ) : (
+    <Redirect to="/app/login/" noThrow />
+  )
+}

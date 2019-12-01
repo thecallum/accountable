@@ -1,6 +1,8 @@
-import React from "react"
+import React, { useContext } from "react"
 import { Link } from "gatsby"
-import { Consumer } from "../services/security"
+import { navigate } from "@reach/router"
+
+import { Context } from "../context/context"
 import Styled from "styled-components"
 
 const Navbar = Styled.nav`
@@ -44,35 +46,40 @@ const Navbar = Styled.nav`
   }
 `
 
-export default () => (
-  <Consumer>
-    {context => (
-      <Navbar>
-        <div className="title">
-          <Link to="/">Navbar</Link>
-        </div>
+export default () => {
+  const { store, actions } = useContext(Context)
 
-        <ul>
-          {!!context && context.state.auth ? (
-            <>
-              <li>
-                <Link to="/app/">Home</Link>
-              </li>
+  const logout = () => {
+    actions.logout()
+    navigate("/")
+  }
 
-              <li>
-                <Link to="/app/about/">About</Link>
-              </li>
-              <li>
-                <a onClick={() => context.logout(() => {})}>Logout</a>
-              </li>
-            </>
-          ) : (
+  return (
+    <Navbar>
+      <div className="title">
+        <Link to="/">Navbar</Link>
+      </div>
+
+      <ul>
+        {!!store.auth.authenticated ? (
+          <>
             <li>
-              <Link to="/app/login/">Login</Link>
+              <Link to="/app/">Home</Link>
             </li>
-          )}
-        </ul>
-      </Navbar>
-    )}
-  </Consumer>
-)
+
+            <li>
+              <Link to="/app/about/">About</Link>
+            </li>
+            <li>
+              <a onClick={logout}>Logout</a>
+            </li>
+          </>
+        ) : (
+          <li>
+            <Link to="/app/login/">Login</Link>
+          </li>
+        )}
+      </ul>
+    </Navbar>
+  )
+}

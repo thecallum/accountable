@@ -1,77 +1,82 @@
-import React, { useState } from "react"
-import { Consumer } from "../services/security"
+import React, { useContext, useState } from "react"
+import { Context } from "../context/context"
 import { navigate } from "gatsby"
 
-const Form = ({ login }) => {
-  const [state, setState] = useState({
-    loading: false,
-    errors: [],
+export default () => {
+  const { store, actions } = useContext(Context)
 
+  const [state, setState] = useState({
+    errors: [],
     email: "",
     password: "",
   })
 
-  const handleChange = e => {
-    setState({
-      ...state,
-      [e.target.name]: e.target.value,
-    })
-  }
+  const handleLogin = e => {
+    e.preventDefault()
+    if (store.auth.loading) return
 
-  const handleLogin = () => {
     const errors = []
+
     if (state.email === "") errors.push("Add a valid email")
     if (state.password === "") errors.push("Add a valid password")
 
-    setState(state => ({ ...state, errors }))
+    setState(state => ({
+      ...state,
+      errors,
+    }))
 
-    if (errors.length > 0) return
+    if (errors.length) return
 
-    setState(state => ({ ...state, loading: true }))
-
-    login(state.email, state.password).then(res => {
-      console.log("login", res)
-
-      if (res.success) {
+    actions.login(state.email, state.password).then(res => {
+      if (res === true) {
+        // alert("login")
         navigate("/app/about/")
-      }
+      } else {
+        // alert(res.message)
 
-      setState(state => ({
-        ...state,
-        loading: false,
-        errors: [res.error],
-      }))
+        setState(state => ({
+          ...state,
+          errors: [res.message],
+        }))
+      }
     })
   }
 
+  const handleChange = e =>
+    setState({ ...state, [e.target.name]: e.target.value })
+
   return (
     <>
-      <div>
-        <label>
-          email
-          <input
-            type="text"
-            name="email"
-            value={state.name}
-            onChange={handleChange}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          password
-          <input
-            type="password"
-            name="password"
-            value={state.password}
-            onChange={handleChange}
-          />
-        </label>
-      </div>
+      <h1>Login</h1>
 
-      <button onClick={handleLogin}>Login</button>
+      <form onSubmit={handleLogin}>
+        <div>
+          <label>
+            email
+            <input
+              type="text"
+              name="email"
+              value={state.email}
+              onChange={handleChange}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            password
+            <input
+              type="password"
+              name="password"
+              value={state.password}
+              onChange={handleChange}
+            />
+          </label>
+        </div>
 
-      {state.loading && <p>loading...</p>}
+        <button type="submit">Login</button>
+      </form>
+
+      {store.auth.loading && <p>Loading...</p>}
 
       {state.errors.length > 0 && (
         <ul>
@@ -85,15 +90,3 @@ const Form = ({ login }) => {
     </>
   )
 }
-
-export default () => (
-  <Consumer>
-    {context => (
-      <>
-        <p>Login</p>
-
-        <Form login={context.login} />
-      </>
-    )}
-  </Consumer>
-)

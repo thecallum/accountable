@@ -1,13 +1,12 @@
 import React from "react"
 import Layout from "../components/layout"
 import Router from "../appRouter"
-
-import { Security } from "../services/security"
+import Store from "../context/context"
 
 export default () => (
-  <Security>
+  <Store>
     <Layout>
       <Router />
     </Layout>
-  </Security>
+  </Store>
 )
